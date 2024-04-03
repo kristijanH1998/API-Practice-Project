@@ -1,0 +1,32 @@
+.maincontent{
+    padding-top: 0%;
+    padding-left:0%;
+}
+.maincontent > form {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    row-gap: 10px;
+}
+.col {
+padding: 1%;
+}
+.col-lg{
+    overflow: hidden;
+    margin: 10px 0;
+    position: relative;
+    flex-basis: 30%;
+}
+
+.col-lg img{
+    height: 75%;
+    width: 75%;
+    display:block;
+    position: relative;
+    margin: auto;
+}
+.imgrid {
+display: flex;
+flex-wrap: wrap;
+justify-content: space-between;
+}

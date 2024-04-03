@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>API Practice</title>
+</head>
+<body>
+    <div class="maincontent">
+        <form onsubmit="getImages(); return false;">
+            <h1>Cats App</h1>
+            <label for="imageNum">Number of cat images to display:</label>
+            <input type="text" id="imageNum" required>
+            <label for="breed">Name of cat breed (optional):</label>
+            <input type="text" id="breed">
+            <button type="submit">Get Images</button>
+        </form>
+        <div id="grid" class="imgrid"></div>
+    </div>
+    <script src="index.js"></script>
+</body>
+</html>
