@@ -6,7 +6,9 @@ let imageNum;
 let breedId = "";
 
 //fetches images from TheCatAPI
-function getImages() {
+async function getImages() {
+    await postAndGetFavorite();
+
     url = `https://api.thecatapi.com/v1/`;
     if(imageGrid.childNodes.length !== 0) {
         while(imageGrid.firstChild){
@@ -19,9 +21,13 @@ function getImages() {
     } else {
         url += `images/search?limit=${imageNum}`;
     }
-    if(document.getElementById('breed').value){
-        toBreedId();
+    if(document.getElementById('breed').value != ""){
+        url += `&breed_ids=${await toBreedId()}`;
+        //console.log(url);
     }
+
+    // console.log(url + `&api_key=${api_key}`)
+
     const fetchPromise = fetch(url + `&api_key=${api_key}`)
     let jsonPromise = null;
     fetchPromise.then((response) => {
@@ -52,15 +58,47 @@ async function toBreedId() {
             throw new Error(`HTTP error: ${breedResponse.status}`);
         }
         let breedData = await breedResponse.json();
+        console.log(breedData)
         breedId = breedData.find(br => 
             br['name'].toLowerCase() == breed.toLowerCase()
-        ).id;
-        url += `&breed_ids=${breedId}`;
-        console.log(breedId)
-        console.log(url)
+        );
+        //console.log(breedId.id)
+        return breedId.id;
+        // console.log(breedId)
+        // console.log(breedId.id);
+        // console.log(url)
         // console.log(breedData[0]['name']);
         // console.log(breedData[0]);
     } catch (error) {
         console.error(`Error while fetching cat breed: ${error}`);
     }
+}
+
+async function postAndGetFavorite() {
+    var rawBody = JSON.stringify({ 
+        "image_id": "E8dL1Pqpz",
+        "sub_id":"kiki"
+         });
+         console.log(rawBody);
+
+        
+        const newFavourite = await fetch(
+        "https://api.thecatapi.com/v1/favourites", 
+            {
+                method: 'POST',
+                headers: { 'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G'} ,
+                body: rawBody
+            }
+        )
+        console.log(newFavourite);
+
+        // const response = await fetch(
+        //     'https://api.thecatapi.com/v1/favourites?limit=1&sub_id=kiki&order=DESC',{
+        //         headers:{
+        //             "content-type":"application/json",
+        //             'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G'
+        //         }
+        //     });
+        //     const favourites = await response.json();
+        // console.log(favourites);
 }
