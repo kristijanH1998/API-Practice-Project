@@ -75,8 +75,33 @@ async function toBreedId() {
 }
 
 async function postAndGetFavorite() {
+
+    const url = `https://api.thecatapi.com/v1/images/search`;
+    let imgId = "";
+    await fetch(url,{headers: {
+      'x-api-key': api_key
+    }})
+    .then((response) => {
+      return response.json();
+    })
+    .then((data) => {
+        imgId = data[0].id;
+    });
+
+
+
+
+
+
+
+
+
+
+    console.log(imgId)
+
+
     var rawBody = JSON.stringify({ 
-        "image_id": "E8dL1Pqpz",
+        "image_id": imgId,
         "sub_id":"kiki"
          });
          console.log(rawBody);
@@ -86,19 +111,20 @@ async function postAndGetFavorite() {
         "https://api.thecatapi.com/v1/favourites", 
             {
                 method: 'POST',
-                headers: { 'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G'} ,
+                headers: { 'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G',
+                           'Content-Type': 'application/json'} ,
                 body: rawBody
             }
         )
         console.log(newFavourite);
 
-        // const response = await fetch(
-        //     'https://api.thecatapi.com/v1/favourites?limit=1&sub_id=kiki&order=DESC',{
-        //         headers:{
-        //             "content-type":"application/json",
-        //             'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G'
-        //         }
-        //     });
-        //     const favourites = await response.json();
-        // console.log(favourites);
+        const response = await fetch(
+            'https://api.thecatapi.com/v1/favourites?limit=20&sub_id=kiki&order=DESC',{
+                headers:{
+                    'content-type':'application/json',
+                    'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G'
+                }
+            });
+            const favourites = await response.json();
+        console.log(favourites);
 }
