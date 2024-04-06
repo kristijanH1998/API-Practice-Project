@@ -16,6 +16,12 @@
             <input type="text" id="breed">
             <button type="submit">Get Images</button>
         </form>
+        
+        <label for="limit">Choose number of favorites to render:</label>
+        <input type="text" id="limit" name="limit" value="5" />
+        <button id="generate" onclick="generateFavorites(); return false;">Generate favorites</button>
+        <div id="output"></div>
+        
         <div id="grid" class="imgrid"></div>
     </div>
     <script src="index.js"></script>

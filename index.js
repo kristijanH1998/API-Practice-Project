@@ -7,8 +7,6 @@ let breedId = "";
 
 //fetches images from TheCatAPI
 async function getImages() {
-    await postAndGetFavorite();
-
     url = `https://api.thecatapi.com/v1/`;
     if(imageGrid.childNodes.length !== 0) {
         while(imageGrid.firstChild){
@@ -31,6 +29,9 @@ async function getImages() {
     const fetchPromise = fetch(url + `&api_key=${api_key}`)
     let jsonPromise = null;
     fetchPromise.then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
         jsonPromise = response.json();
         jsonPromise.then((data) => {
             data.map(function (dataItem) {
@@ -75,56 +76,59 @@ async function toBreedId() {
 }
 
 async function postAndGetFavorite() {
+    //test code: finds and fetches a random image from the server
+    // const url = `https://api.thecatapi.com/v1/images/search`;
+    // let imgId = "";
+    // await fetch(url,{headers: {
+    //   'x-api-key': api_key
+    // }})
+    // .then((response) => {
+    //   return response.json();
+    // })
+    // .then((data) => {
+    //     imgId = data[0].id;
+    // });
+    //console.log(imgId)
 
-    const url = `https://api.thecatapi.com/v1/images/search`;
-    let imgId = "";
-    await fetch(url,{headers: {
-      'x-api-key': api_key
-    }})
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-        imgId = data[0].id;
-    });
-
-
-
-
-
-
-
-
-
-
-    console.log(imgId)
-
-
+    //creating a JSON object with image_id and subscriber id to reference the image that will me sent as new favorite
     var rawBody = JSON.stringify({ 
         "image_id": imgId,
         "sub_id":"kiki"
-         });
-         console.log(rawBody);
+    });
+    //console.log(rawBody);
+    
+    //making a new favorite and posting it to list of favorites
+    const newFavorite = await fetch("https://api.thecatapi.com/v1/favourites", 
+        {
+            method: 'POST',
+            headers: { 'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G',
+                       'Content-Type': 'application/json'} ,
+            body: rawBody
+        }
+    )
+    //console.log(newFavorite);
+}
 
-        
-        const newFavourite = await fetch(
-        "https://api.thecatapi.com/v1/favourites", 
-            {
-                method: 'POST',
-                headers: { 'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G',
-                           'Content-Type': 'application/json'} ,
-                body: rawBody
-            }
-        )
-        console.log(newFavourite);
+function generateFavorites() {
+    // Create a new worker, giving it the code in "generate_favorites.js"
+    const worker = new Worker("./generate-favorites.js");
 
-        const response = await fetch(
-            'https://api.thecatapi.com/v1/favourites?limit=20&sub_id=kiki&order=DESC',{
-                headers:{
-                    'content-type':'application/json',
-                    'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G'
-                }
-            });
-            const favourites = await response.json();
-        console.log(favourites);
+    // When the user clicks "Generate favorites", send a message to the worker.
+    // The message command is "generate", and the message also contains "limit",
+    // which is the number of favorites to generate.
+    document.querySelector("#generate").addEventListener("click", () => {
+        const limit = document.querySelector("#limit").value;
+        worker.postMessage({
+            command: "generate",
+            limit,
+        });
+    });
+
+    // When the worker sends a message back to the main thread,
+    // update the output box with a message for the user, including the number of
+    // primes that were generated, taken from the message data.
+    worker.addEventListener("message", (message) => {
+        document.querySelector("#output").textContent =
+            `Finished generating ${message.data} favorites!`;
+    });
 }
