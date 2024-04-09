@@ -5,6 +5,30 @@ let breed = "";
 let imageNum;
 let breedId = "";
 
+// Create a new worker, giving it the code in "generate_favorites.js"
+const worker = new Worker("./generate-favorites.js");
+
+// When the user clicks "Generate favorites", send a message to the worker.
+// The message command is "generate", and the message also contains "limit",
+// which is the number of favorites to generate.
+document.querySelector("#generate").addEventListener("click", () => {
+    const limit = document.querySelector("#limit").value;
+    worker.postMessage({
+        command: "generate",
+        limit,
+    });
+    
+});
+
+// When the worker sends a message back to the main thread,
+// update the output box with a message for the user, including the number of
+// primes that were generated, taken from the message data.
+worker.addEventListener("message", (message) => {
+    document.querySelector("#output").textContent =
+        `Finished generating ${message.data} favorites!`;
+});
+
+
 //fetches images from TheCatAPI
 async function getImages() {
     url = `https://api.thecatapi.com/v1/`;
@@ -75,7 +99,7 @@ async function toBreedId() {
     }
 }
 
-async function postAndGetFavorite() {
+async function postAndGetFavorite(imgId) {
     //test code: finds and fetches a random image from the server
     // const url = `https://api.thecatapi.com/v1/images/search`;
     // let imgId = "";
@@ -90,9 +114,9 @@ async function postAndGetFavorite() {
     // });
     //console.log(imgId)
 
-    //creating a JSON object with image_id and subscriber id to reference the image that will me sent as new favorite
+    //creating a JSON object with image_id and subscriber id to reference the image that will be sent as new favorite
     var rawBody = JSON.stringify({ 
-        "image_id": imgId,
+        "image_id": `${imgId}`,
         "sub_id":"kiki"
     });
     //console.log(rawBody);
@@ -109,26 +133,3 @@ async function postAndGetFavorite() {
     //console.log(newFavorite);
 }
 
-function generateFavorites() {
-    // Create a new worker, giving it the code in "generate_favorites.js"
-    const worker = new Worker("./generate-favorites.js");
-
-    // When the user clicks "Generate favorites", send a message to the worker.
-    // The message command is "generate", and the message also contains "limit",
-    // which is the number of favorites to generate.
-    document.querySelector("#generate").addEventListener("click", () => {
-        const limit = document.querySelector("#limit").value;
-        worker.postMessage({
-            command: "generate",
-            limit,
-        });
-    });
-
-    // When the worker sends a message back to the main thread,
-    // update the output box with a message for the user, including the number of
-    // primes that were generated, taken from the message data.
-    worker.addEventListener("message", (message) => {
-        document.querySelector("#output").textContent =
-            `Finished generating ${message.data} favorites!`;
-    });
-}
