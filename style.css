@@ -7,9 +7,10 @@
     flex-direction: column;
     width: 40%;
     row-gap: 10px;
+    margin: 20px;
 }
 .col {
-padding: 1%;
+    padding: 1%;
 }
 .col-lg{
     overflow: hidden;
@@ -25,7 +26,12 @@ padding: 1%;
     margin: auto;
 }
 .imgrid {
-display: flex;
-flex-wrap: wrap;
-justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
+.gold {
+    border-color: gold ;
+    border-style: solid;
+    border-width: thick;
+  }

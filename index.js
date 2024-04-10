@@ -25,7 +25,24 @@ document.querySelector("#generate").addEventListener("click", () => {
 // primes that were generated, taken from the message data.
 worker.addEventListener("message", (message) => {
     document.querySelector("#output").textContent =
-        `Finished generating ${message.data} favorites!`;
+        `Finished generating ${message.data[0]} favorites!`;
+    //remove all existing rendered images if there are any, so that only favorite images can be made visible
+    if(imageGrid.childNodes.length !== 0) {
+        while(imageGrid.firstChild){
+            imageGrid.removeChild(imageGrid.firstChild);
+        }
+    }
+    //render only favorite images
+    console.log(message.data[1])
+    for(let favURL of message.data[1]){
+        let image = document.createElement('img');
+        image.src = `${favURL}`;
+        let cell = document.createElement('div');
+        cell.classList.add('col');
+        cell.classList.add('col-lg');
+        cell.appendChild(image);
+        document.getElementById('grid').appendChild(cell);
+    }
 });
 
 
@@ -66,6 +83,14 @@ async function getImages() {
                 cell.classList.add('col-lg');
                 cell.appendChild(image);
                 document.getElementById('grid').appendChild(cell);
+                
+                //code below adds event listeners to all images in the grid. They detect clicks and add clicked images to favorites
+                image.addEventListener('click', () => {
+                    image.classList.add('gold');
+                    postAndGetFavorite(dataItem.id);
+                    //console.log(dataItem.id);
+                });
+
             })
         })
     })
@@ -83,7 +108,7 @@ async function toBreedId() {
             throw new Error(`HTTP error: ${breedResponse.status}`);
         }
         let breedData = await breedResponse.json();
-        console.log(breedData)
+        //console.log(breedData)
         breedId = breedData.find(br => 
             br['name'].toLowerCase() == breed.toLowerCase()
         );
@@ -132,4 +157,3 @@ async function postAndGetFavorite(imgId) {
     )
     //console.log(newFavorite);
 }
-
