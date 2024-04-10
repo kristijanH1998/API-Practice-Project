@@ -33,7 +33,7 @@ worker.addEventListener("message", (message) => {
         }
     }
     //render only favorite images
-    console.log(message.data[1])
+    //console.log(message.data[1])
     for(let favURL of message.data[1]){
         let image = document.createElement('img');
         image.src = `${favURL}`;
