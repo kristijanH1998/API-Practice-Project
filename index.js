@@ -1,4 +1,4 @@
-const api_key = "live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G";
+const api_key = config.API_KEY;
 let url = `https://api.thecatapi.com/v1/`;
 const imageGrid = document.getElementById('grid');
 let breed = "";
@@ -16,6 +16,7 @@ document.querySelector("#generate").addEventListener("click", () => {
     worker.postMessage({
         command: "generate",
         limit,
+        key: config.API_KEY
     });
     
 });
@@ -150,7 +151,7 @@ async function postAndGetFavorite(imgId) {
     const newFavorite = await fetch("https://api.thecatapi.com/v1/favourites", 
         {
             method: 'POST',
-            headers: { 'x-api-key': 'live_C3HkZwg9OxYFwRnEsJykvtEWhGRxChodU8Q7cjyYcsTTGbfk88wS79G2pdza9E8G',
+            headers: { 'x-api-key': config.API_KEY,
                        'Content-Type': 'application/json'} ,
             body: rawBody
         }
